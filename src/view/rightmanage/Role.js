@@ -2,39 +2,15 @@ import React, { Component } from 'react'
 import { Table ,Tag,Button} from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import axios from 'axios'
-import store from '../../redux/store'
-export default class Role extends Component {
+import {connect} from 'react-redux'
+class Role extends Component {
 
-    actionCreator=()=>{
-        
-        return(dispatch)=>{
-            axios.get('http://localhost:8000/roles').then(res=>{
-                console.log(res.data)
-                dispatch({
-                    type:'setRole',
-                    payload:res.data
-                })
-            })
-        }
-    }
+   
     
     componentDidMount(){
-        if(store.getState().rolelist.length===0){
-            store.dispatch(this.actionCreator())
-        }else{
-            console.log('使用缓存')
-            this.setState({
-                datalist:store.getState().rolelist
-            })
+        if(this.props.datalist.length===0){
+            this.props.setList()
         }
-        this.unscribe=store.subscribe(()=>{
-            this.setState({
-                datalist:store.getState().rolelist
-            })
-        })
-    }
-    componentWillUnmount(){
-        this.unscribe()
     }
 
     state={
@@ -53,7 +29,6 @@ export default class Role extends Component {
               ),
             },
           ],
-          datalist : []
     }
     render() {
         return (
@@ -83,9 +58,28 @@ export default class Role extends Component {
                         // rowExpandable: record => record.name !== 'Not Expandable',
                       }}
                       rowKey={item=>item.id}
-                      dataSource={this.state.datalist}
+                      dataSource={this.props.datalist}
                 />,
             </div>
         )
     }
 }
+const mapStateFromProps=(state)=>{
+    return{
+        datalist:state.rolelist
+    }
+}
+const mapDispatchFromProps={
+    setList:()=>{
+        return(dispatch)=>{
+            axios.get('http://localhost:8000/roles').then(res=>{
+                console.log(res.data)
+                dispatch({
+                    type:'setRole',
+                    payload:res.data
+                })
+            })
+        }
+    }
+}
+export default connect(mapStateFromProps,mapDispatchFromProps)(Role)

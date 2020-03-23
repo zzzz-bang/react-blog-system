@@ -1,32 +1,15 @@
-import {createStore,applyMiddleware} from 'redux'
+import {createStore,applyMiddleware,combineReducers,compose} from 'redux'
 import reduxThunk from 'redux-thunk'
 import reduxPromise from 'redux-promise'
-const reducer=(prevState={
-    iscollapsed:false,
-    rolelist:[],
-    rightlist:[]
-},action)=>{
-    console.log(prevState,action)
-    let{type,payload}=action
-    switch(type){
-        case 'iscollapsed':
-            var newState={...prevState}
-            newState.iscollapsed=payload
-            return newState
-        case 'setRole':
-            var newState1={...prevState}
-            newState1.rolelist=action.payload
-            return newState1
-        case 'setRight':
-            var newState2={...prevState}
-            newState2.rightlist=action.payload
-            return newState2  
-        default:
-            return prevState
-    }
-    
-}
-
-const store=createStore(reducer,applyMiddleware(reduxThunk,reduxPromise))
+import collapsedReducer from './reducer/collapsedReducer'
+import rightReducer from './reducer/rightReducer'
+import roleReducer from './reducer/roleReducer'
+const reducer=combineReducers({
+    iscollapsed:collapsedReducer,
+    rolelist:roleReducer,
+    rightlist:rightReducer
+})
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store=createStore(reducer,composeEnhancers(applyMiddleware(reduxThunk,reduxPromise)))
 
 export default store

@@ -1,31 +1,12 @@
 import React, { Component } from 'react'
 import { Table,Tag } from 'antd';
 import axios from 'axios'
-import store from '../../redux/store'
-export default class Right extends Component {
-    actionCreator=()=>{
-        return axios.get('http://localhost:8000/rights').then(res=>{
-            return({
-                type:'setRight',
-                payload:res.data
-            })
-        })
-            // this.state.datalist=res.data
-           
-    }
+import {connect} from 'react-redux'
+class Right extends Component {
+    
     componentDidMount(){
-        if(store.getState().rightlist.length===0){
-            store.dispatch(this.actionCreator()).then(data=>{
-                console.log(data)
-                this.setState({
-                    datalist:store.getState().rightlist
-                })
-            })
-        }else{
-            console.log("使用缓存")
-            this.setState({
-                datalist:store.getState().rightlist
-            })
+        if(this.props.datalist.length===0){
+            this.props.actionCreator()
         }
         
     }
@@ -54,14 +35,29 @@ export default class Right extends Component {
               }
             }
         ],
-        datalist :[]
     }
     render() {
         return (
             <div>
-                <Table columns={this.state.columns} dataSource={this.state.datalist} 
+                <Table columns={this.state.columns} dataSource={this.props.datalist} 
                 pagination={{pageSize:5}} />
             </div>
         )
     }
 }
+const mapStateToProps=(state)=>{
+    return{
+        datalist:state.rightlist
+    }
+}
+const mapDispatchToProps={
+    actionCreator:()=>{
+        return axios.get('http://localhost:8000/rights').then(res=>{
+            return({
+                type:"setRight",
+                payload:res.data
+            })
+        })
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(Right)

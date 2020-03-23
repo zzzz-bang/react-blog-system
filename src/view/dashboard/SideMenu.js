@@ -2,32 +2,18 @@ import React, { Component } from 'react'
 import { Layout, Menu } from 'antd';
 import Menus from '../../router/Menus';
 import {withRouter} from 'react-router'
-import store from '../../redux/store'
+import {connect} from 'react-redux'
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
 class SideMenu extends Component {
-    state = {
-        collapsed: false,
-    };
-    componentDidMount(){
-        this.unscirbe=store.subscribe(()=>{
-            console.log('订阅',store.getState())
-            this.setState({
-                collapsed:store.getState().iscollapsed
-            })
-        })
-    }
-    componentWillUnmount(){
-        this.unscirbe()
-    }
     render() {
         var pathname=this.props.location.pathname;
         var openname=['/'+pathname.split('/')[1]]
         // var SelectedKeys = [pathname]
         // console.log(pathname.split('/'))
         return (
-            <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
+            <Sider trigger={null} collapsible collapsed={this.props.collapsed}>
                 <div className="logo" />
                 <Menu theme="dark" mode="inline"  onClick={this.handleClick}
                 defaultOpenKeys={openname} selectedKeys = {pathname}>
@@ -80,4 +66,10 @@ class SideMenu extends Component {
         )
     }
 }
-export default withRouter(SideMenu)
+const mapStatefromProps=(state)=>{
+    return{
+        collapsed:state.iscollapsed
+    }
+}
+
+export default withRouter(connect(mapStatefromProps)(SideMenu))

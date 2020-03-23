@@ -6,8 +6,7 @@ import {
     UserOutlined
   } from '@ant-design/icons';
 import {withRouter} from 'react-router'
-import store from '../../redux/store'
-
+import {connect} from 'react-redux'
 const { Header } = Layout;
 
 class TopHeader extends Component{
@@ -15,14 +14,10 @@ class TopHeader extends Component{
         collapsed: false,
     };
     
-    actionCreater=(collapsed)=>{
-      return{
-        type:'iscollapsed',
-        payload:collapsed
-      }
-    }
+    
     toggle = (collapsed) => {
-      store.dispatch(this.actionCreater(collapsed))
+      // store.dispatch(this.actionCreater(collapsed))
+      this.props.actionCreater(collapsed)
       this.setState({
         collapsed: !this.state.collapsed,
       });
@@ -65,5 +60,16 @@ class TopHeader extends Component{
         // window.location.reload()
     }
 }
+const mapStatefromProps=(state)=>{
+  return{}
+}
+const mapDispatchfromProps={
+  actionCreater:(collapsed)=>{
+    return{
+      type:'iscollapsed',
+      payload:collapsed
+    }
+  }
+}
 
-export default withRouter(TopHeader)
+export default withRouter(connect(mapStatefromProps,mapDispatchfromProps)(TopHeader))
